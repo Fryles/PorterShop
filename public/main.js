@@ -24,7 +24,7 @@ $(document).ready(function () {
       );
       item.append(inneritem);
       item.append(
-        "<img class='itemimage' src='/resources/" + data[i].name + ".png'>"
+        "<img class='itemimage' src='/resources/" + data[i].name.toLowerCase() + ".png'>"
       );
       $("#inventory").append(item);
       
