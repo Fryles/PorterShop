@@ -1,5 +1,5 @@
 html{
-	background-color: #29382b;
+	background-color: #292d38;
 	color: white;
 	font-family: 'Open Sans', sans-serif;
 	font-size: 13px;
@@ -13,8 +13,9 @@ a{
 	text-decoration: none;
 }
 p{
+	width: fit-content;
 	margin: 5px;
-	font-size: 14px;
+	font-size: 16px;
 }
 button{
 	background-color: #0b743c;
@@ -27,6 +28,19 @@ button{
 	padding: 8px;
 	border: none;
 	cursor: pointer;
+}
+label{
+	font-size: 18px;
+	vertical-align: top;
+}
+input{
+	width: 50%;
+	margin: 3px;
+}
+textarea{
+	width: 70%;
+	height: 50px;
+	margin: 3px;
 }
 .header{
 	width: auto;
@@ -79,8 +93,8 @@ button{
 	display: flex;
 	width: auto;
 	height: auto;
-	background-color: #3f4442;
-	border-radius: 0px;
+	background-color: #1e1e27;
+	border-radius: 2px;
 	padding-left: 5px;
 }
 .cartItem{
@@ -104,8 +118,11 @@ button{
 	cursor: pointer;
 }
 #checkoutInput{
-	font-size: medium;
-	width: max-content;
+	width: 90%;
 	margin: 10px;
 }
-
+#openstatus{
+	text-align: center;
+	padding: 5px;
+	margin: 5px;
+}

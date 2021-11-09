@@ -35,7 +35,7 @@ $(document).ready(function () {
 
   $("#add").click(function () {
     inventory.push({
-      name: "name"+addIndex,
+      name: "name" + addIndex,
       price: 0,
       quantity: 0,
     });
@@ -56,6 +56,20 @@ $(document).ready(function () {
     sendAdjustment();
     fillTable();
   });
+
+  getOpenStatus();
+
+  $("#open").click(function () {
+    $.post("/open", { status: true }, function (data) {
+      getOpenStatus();
+    });
+  });
+
+  $("#close").click(function () {
+    $.post("/open", { status: false }, function (data) {
+      getOpenStatus()
+    });
+  });
 });
 
 function sendAdjustment() {
@@ -67,11 +81,9 @@ function sendAdjustment() {
     data: JSON.stringify(inventory),
     success: function (data) {
       console.log(data);
-      if(data=="success"){
-        swal("Success!", "Inventory updated", "success");
-      }
     },
   });
+  alert("Inventory Updated");
 }
 
 function getItemIndex(name) {
@@ -116,6 +128,15 @@ function loadTable() {
   });
 }
 
+function getOpenStatus() {
+  $.get("/open", function (data) {
+    if (data.status) { 
+      $("#opens").html("Currently <span style='color:#90EAA9'>open!</span>");
+    } else {
+      $("#opens").html("Currently <span style='color:#EA9090'>closed.</span>");
+    }
+  });
+}
 function addTableHeaders() {
   var table = $("#inventoryTable");
   var row = $("<tr>");

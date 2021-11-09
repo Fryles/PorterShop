@@ -1,5 +1,8 @@
+var inventory;
 $(document).ready(function () {
-  inventory = JSON.parse(localStorage.getItem("inventory"));
+  inventory =  $.get("/inventory", function (data) {
+    inventory = data;
+  });
   var cart = JSON.parse(localStorage.getItem("cart"));
   //add cart items to page in list
   cart.forEach((item) => {
@@ -57,8 +60,17 @@ $(document).ready(function () {
     }, 0)}`
   );
 
-  //update delivery status
-  $("#deliveryStatus").innerText = "Delivering to " + localStorage.getItem("room");
+  $.get("/open", function (data) {
+    if (data.status) {
+      $("#openstatus").html(
+        "We are currently <span style='color:#90EAA9'>open!</span>"
+      );
+    } else {
+      $("#openstatus").html(
+        "We are currently <span style='color:#EA9090'>closed.</span>"
+      );
+    }
+  });
 
   //add cleat cart button click listener
   $("#clearCart").click(function () {
@@ -118,3 +130,5 @@ function getItem(name) {
   }
   return null;
 }
+
+

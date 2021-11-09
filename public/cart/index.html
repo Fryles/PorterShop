@@ -23,22 +23,33 @@
         ><img style="width: 30px; height: 30px" src="/resources/cart.png" />
       </a>
     </div>
+    <h2 id="openstatus"></h2>
     <p>
-      Click on an item to adjust the quantity, or click on the trash can to
-      clear the cart and return to the store.
+      Click on an item to adjust the quantity, or clear the cart and return to
+      the store.
+      <br />
+      If you want an item cooked, tell us in the comments box. Please allow an
+      extra 5-15 minutes for cooking.
+      <br />
+      Note: We cannot provide silverware or dishes.
     </p>
     <h2>Cart:</h2>
 
     <ul id="cart"></ul>
     <div id="checkoutInput">
-      <label id="delivery"></label><br />
       <label>Name:</label>
+      <br />
       <input type="text" id="name" name="name" /><br />
       <label>Room Number:</label>
+      <br />
       <input type="number" id="roomNum" name="room" /><br />
+      <label>Comments:</label>
+      <br />
+      <textarea id="comments" name="comments"></textarea><br />
     </div>
     <span id="total"></span>
-    <button id="checkout">Checkout</button><button id="clearCart">Clear Cart</button>
+    <button id="checkout">Checkout</button
+    ><button id="clearCart">Clear Cart</button>
     <br />
   </body>
 </html>
