@@ -57,6 +57,9 @@ $(document).ready(function () {
     }, 0)}`
   );
 
+  //update delivery status
+  $("#deliveryStatus").innerText = "Delivering to " + localStorage.getItem("room");
+
   //add cleat cart button click listener
   $("#clearCart").click(function () {
     localStorage.setItem("cart", JSON.stringify([]));
@@ -70,6 +73,18 @@ $(document).ready(function () {
 });
 
 function checkout() {
+  //check room number
+  var room = $("#room").val();
+  if (room == "") {
+    swal("Please enter a room number");
+    return;
+  }
+  if(!(600 < room <700 )){
+    swal("626 Munchies is only delivering to the 6th floor for now.");
+    return;
+  }
+  //check 
+
 }
 
 function openVenmo(price, desc, order) {

@@ -16,6 +16,18 @@ p{
 	margin: 5px;
 	font-size: 14px;
 }
+button{
+	background-color: #0b743c;
+	width: 100px;
+	height: auto;
+	border-radius: 4px;
+	color: white;
+	font-size: medium;
+	margin: 5px;
+	padding: 8px;
+	border: none;
+	cursor: pointer;
+}
 .header{
 	width: auto;
 	margin-right: 25px;
@@ -42,6 +54,12 @@ p{
 	border: none;
 	cursor: pointer;
 }
+.redbtn{
+	background-color: #d44141;
+}
+.nostock{
+	background-color: #da8888;
+}
 #cart{
 	font-size: medium;
 }
@@ -61,8 +79,8 @@ p{
 	display: flex;
 	width: auto;
 	height: auto;
-	background-color: #345242;
-	border-radius: 10px;
+	background-color: #3f4442;
+	border-radius: 0px;
 	padding-left: 5px;
 }
 .cartItem{
@@ -90,3 +108,4 @@ p{
 	width: max-content;
 	margin: 10px;
 }
+

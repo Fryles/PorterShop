@@ -1,18 +1,20 @@
 // on document load
 
-var inventory = {}
+var inventory = []
 
 $(document).ready(function () {
   initCart();
   //send get request to get inventory
   $.get("/inventory", function (data) {
     inventory = data;
-    localStorage.setItem('inventory', JSON.stringify(data));
     //loop through inventory
     for (var i = 0; i < data.length; i++) {
-      if (data[i].quantity > 0) {
+      
       //create a new div for each item
       var item = $("<div>");
+      if (data[i].quantity > 0) {
+        item.addClass("nostock");
+      }
       var inneritem = $("<div>");
       item.addClass("item");
       inneritem.addClass("inneritem");
@@ -28,7 +30,7 @@ $(document).ready(function () {
       );
       $("#inventory").append(item);
       
-    }}
+    }
 
     //add click event to each item
     $('.item').click(function(a){
