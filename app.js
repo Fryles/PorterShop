@@ -16,7 +16,7 @@ var pool = new Pool({
 });
 
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json()); 
+app.use(express.json());
 app.use(cookieParser());
 app.use("/", express.static("public"));
 
@@ -48,8 +48,8 @@ app.post("/adjust", (req, res) => {
           }
         );
       }
+      res.sendStatus(200);
       console.log("inventory updated");
-      res.send("success");
       return;
     });
   } else {
@@ -73,6 +73,67 @@ app.post("/adminlogin", (req, res) => {
     res.send("fuckyou");
   }
 });
+
+app.post("/checkout", (req, res) => {
+  //validate cart
+  cart = req.body;
+  for (var i = 0; i < cart.length; i++) {
+    pool.query(
+      "SELECT quantity FROM inventory WHERE name = $1",
+      [cart[i].name],
+      (err, data) => {
+        if (err) {
+          console.log(err);
+          res.sendStatus(500);
+          return;
+        }
+        if (data.rows[0].quantity < cart[i].quantity) {
+          console.log("not enough inventory");
+          res.send("not enough inventory");
+          return;
+        }
+      }
+    );
+  }
+});
+
+//fetch open status
+app.get("/open", (req, res) => {
+  pool.query("SELECT * FROM open", (err, data) => {
+    if (err) {
+      console.log(err);
+      res.sendStatus(500);
+      return;
+    }
+    res.send(data.rows[0]);
+  });
+});
+
+//write open status
+app.post("/open", (req, res) => {
+  if (currentToken == req.cookies["token"]) {
+    pool.query("DELETE FROM open", (err, data) => {
+      if (err) {
+        console.log(err);
+        res.sendStatus(500);
+        return;
+      }
+      pool.query("INSERT INTO open (status) VALUES ($1)", [req.body.status], (err, data) => {
+        if (err) {
+          console.log(err);
+          res.sendStatus(500);
+          return;
+        }
+        res.sendStatus(200);
+      });
+    });
+  } else {
+    console.log("unauthorized");
+    res.sendStatus(403);
+    return;
+  }
+});
+
 
 let port = process.env.PORT;
 if (port == null || port == "") {
