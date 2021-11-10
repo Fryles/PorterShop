@@ -29,8 +29,9 @@ $(document).ready(function () {
       item.append(
         "<img class='itemimage' src='/resources/" +
           data[i].name.toLowerCase() +
-          ".png' onerror='this.onerror = null; this.src='"+ data[i].name.toLowerCase() +".PNG'>"
+          ".png'>"
       );
+      item.setAttribute("onerror='this.onerror=null; this.src='"+ data[i].name.toLowerCase() +".PNG'");
       $("#inventory").append(item);
     }
 
