@@ -31,7 +31,7 @@ $(document).ready(function () {
           data[i].name.toLowerCase() +
           ".png'>"
       );
-      item.setAttribute("onerror='this.onerror=null; this.src='"+ data[i].name.toLowerCase() +".PNG'");
+      item.attr("onerror",`this.onerror=null; this.src='${data[i].name.toLowerCase()}.PNG'`);
       $("#inventory").append(item);
     }
 
