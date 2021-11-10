@@ -75,7 +75,7 @@ app.post("/adminlogin", (req, res) => {
     res.setHeader("Set-Cookie", "token=" + token);
     res.send();
   } else {
-    //fuck you
+    //fuck you :)
     res.send("fuckyou");
   }
 });
