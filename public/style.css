@@ -72,7 +72,7 @@ textarea{
 	background-color: #d44141;
 }
 .nostock{
-	background-color: #da8888;
+	background-color: #351b1b !important;
 }
 #cart{
 	font-size: medium;

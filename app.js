@@ -81,12 +81,13 @@ app.post("/adminlogin", (req, res) => {
 });
 
 app.get("/checkout", (req, res) => {
-  //validate cart
+
   var cart = req.query.cart;
   var total = req.query.total;
   var room = req.query.room;
   var name = req.query.name;
   var comments = req.query.comments;
+
   //await cart validation
   validateCart(cart).then((valid) => {
     valid = valid.every(x => x);

@@ -11,7 +11,7 @@ $(document).ready(function () {
     for (var i = 0; i < data.length; i++) {
       //create a new div for each item
       var item = $("<div>");
-      if (data[i].quantity > 0) {
+      if (data[i].quantity <= 0) {
         item.addClass("nostock");
       }
       var inneritem = $("<div>");
@@ -26,12 +26,14 @@ $(document).ready(function () {
         "<p class='itemquantity'>Quantity: " + data[i].quantity + "</p></div>"
       );
       item.append(inneritem);
-      item.append(
-        "<img class='itemimage' src='/resources/" +
-          data[i].name.toLowerCase() +
-          ".png'>"
+      var img = $("<img>");
+      img.addClass("itemimage");
+      img.attr("src", `/resources/${data[i].name.toLowerCase()}.png`);
+      img.attr(
+        "onerror",
+        `this.onerror=null; this.src='/resources/${data[i].name.toLowerCase()}.PNG'`
       );
-      item.attr("onerror",`this.onerror=null; this.src='${data[i].name.toLowerCase()}.PNG'`);
+      item.append(img);
       $("#inventory").append(item);
     }
 
@@ -42,25 +44,24 @@ $(document).ready(function () {
       var price = item.price;
       var quantity = item.quantity;
       if (quantity > 0) {
-      addToCart({ name: name, quantity: quantity, price: price });
+        addToCart({ name: name, quantity: quantity, price: price });
       } else {
         alert("This item is out of stock");
       }
     });
   });
-//check if store is open
-$.get("/open", function (data) {
-  if (data.status) {
-    $("#openstatus").html(
-      "We are currently <span style='color:#90EAA9'>open!</span>"
-    );
-  } else {
-    $("#openstatus").html(
-      "We are currently <span style='color:#EA9090'>closed.</span>"
-    );
-  }
-});
-
+  //check if store is open
+  $.get("/open", function (data) {
+    if (data.status) {
+      $("#openstatus").html(
+        "We are currently <span style='color:#90EAA9'>open!</span>"
+      );
+    } else {
+      $("#openstatus").html(
+        "We are currently <span style='color:#EA9090'>closed.</span>"
+      );
+    }
+  });
 });
 
 function initCart() {
