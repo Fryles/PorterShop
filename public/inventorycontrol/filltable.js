@@ -40,7 +40,6 @@ $(document).ready(function () {
       quantity: 0,
     });
     addIndex++;
-    sendAdjustment();
     fillTable();
   });
 
@@ -53,7 +52,6 @@ $(document).ready(function () {
     } else {
       alert("Item " + item + " does not exist");
     }
-    sendAdjustment();
     fillTable();
   });
 

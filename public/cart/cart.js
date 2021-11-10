@@ -1,9 +1,10 @@
 var inventory;
+var cart;
 $(document).ready(function () {
-  inventory =  $.get("/inventory", function (data) {
+  inventory = $.get("/inventory", function (data) {
     inventory = data;
   });
-  var cart = JSON.parse(localStorage.getItem("cart"));
+  cart = JSON.parse(localStorage.getItem("cart"));
   //add cart items to page in list
   cart.forEach((item) => {
     $("#cart").append(
@@ -20,7 +21,6 @@ $(document).ready(function () {
     var item = getItem(name);
     var price = item.price;
     var quantity = item.quantity;
-    console.log(cartItem);
     var cartQuantity = cartItem.quantity;
     var slider = document.createElement("input");
     slider.type = "range";
@@ -87,28 +87,69 @@ $(document).ready(function () {
 function checkout() {
   //check room number
   var room = $("#room").val();
-  if (room == "") {
-    swal("Please enter a room number");
+  var name = $("#name").val();
+  var comments = $("#comments").val();
+  var order = localStorage.getItem("cart");
+
+  if (room == "" || name == "") {
+    swal("Please enter a name and room number");
     return;
   }
-  if(!(600 < room <700 )){
+  if (!(600 < room && room < 700)) {
     swal("626 Munchies is only delivering to the 6th floor for now.");
     return;
   }
-  //check 
+  if (cart.length == 0 || cart == null) {
+    swal("Your cart is empty!");
+    return;
+  }
+  if ($("#openstatus > span").innerText == "closed") {
+    swal("Sorry, we are closed right now.");
+    return;
+  }
 
-}
+  var isMobile = false;
+  // device detection
+  if (
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent
+    )
+  ) {
+    isMobile = true;
+  }
 
-function openVenmo(price, desc, order) {
-  //TODO validate cart server side
-  window.open(
-    "venmo://paycharge?txn=pay&recipients=fryles&amount=" +
-      price +
-      "&note=" +
-      desc +
-      "\n" +
-      order
-  );
+  //gen order data
+  var order = {
+    name: name,
+    room: room,
+    comments: comments,
+    total: cart.reduce((acc, item) => {
+      return acc + item.quantity * item.price;
+    }, 0),
+    cart: JSON.parse(order),
+  };
+
+  //send order to server
+  $.get("/checkout", order, function (data) {
+    console.log(data);
+    if (data && isMobile) {
+      swal(
+        "Continue to be redirected to Venmo to finish and pay for your order. Do not edit the Venmo payment."
+      ).then(() => {
+        localStorage.setItem("cart", JSON.stringify([]));
+        window.location = data;
+      });
+    } else if (!isMobile && data) {
+      swal(
+        "Scan this QR code on your phone to finish your order through Venmo. Do not edit the Venmo payment."
+      ).then(() => {
+        localStorage.setItem("cart", JSON.stringify([]));
+        displayQR(data);
+      });
+    } else {
+      swal("Order failed!", "Please refresh and try again.", "error");
+    }
+  });
 }
 
 function getItemFromCart(name) {
@@ -131,4 +172,19 @@ function getItem(name) {
   return null;
 }
 
+function displayQR(url) {
+  var QR_CODE = new QRCode("qrcode", {
+    width: 220,
+    height: 220,
+    colorDark: "#000000",
+    colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel.L,
+  });
+  QR_CODE.makeCode(url);
+}
 
+function isOpen() {
+  $.get("/open", function (data) {
+    return data.status;
+  });
+}

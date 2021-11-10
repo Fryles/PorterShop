@@ -14,6 +14,7 @@
     />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="./qrcode.min.js"></script>
     <script src="./cart.js"></script>
   </head>
   <body>
@@ -27,6 +28,9 @@
     <p>
       Click on an item to adjust the quantity, or clear the cart and return to
       the store.
+      <br />
+      Items will be delivered to your room number approximately 1-5 minutes
+      after we have recieved your payment on venmo.
       <br />
       If you want an item cooked, tell us in the comments box. Please allow an
       extra 5-15 minutes for cooking.
@@ -42,7 +46,7 @@
       <input type="text" id="name" name="name" /><br />
       <label>Room Number:</label>
       <br />
-      <input type="number" id="roomNum" name="room" /><br />
+      <input type="number" id="room" name="room" /><br />
       <label>Comments:</label>
       <br />
       <textarea id="comments" name="comments"></textarea><br />
@@ -51,5 +55,7 @@
     <button id="checkout">Checkout</button
     ><button id="clearCart">Clear Cart</button>
     <br />
+    <p>All payments done through venmo!</p>
+    <div id="qrcode"></div>
   </body>
 </html>
