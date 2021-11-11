@@ -141,7 +141,7 @@ function checkout() {
       });
     } else if (!isMobile && data) {
       swal(
-        "Scan this QR code on your phone to finish your order through Venmo. Do not edit the Venmo payment."
+        "Click OK and scan the QR code on your phone to finish your order through Venmo. Do not edit the Venmo payment."
       ).then(() => {
         localStorage.setItem("cart", JSON.stringify([]));
         displayQR(data);

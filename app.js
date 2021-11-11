@@ -11,6 +11,7 @@ var email = process.env.EMAIL;
 var emailpass = process.env.EMAIL_PASS;
 var destemail = process.env.DEST_EMAIL;
 var destvenmo = process.env.VENMO;
+var secret = process.env.SECRET;
 
 var currentToken = "";
 
@@ -81,7 +82,6 @@ app.post("/adminlogin", (req, res) => {
 });
 
 app.get("/checkout", (req, res) => {
-
   var cart = req.query.cart;
   var total = req.query.total;
   var room = req.query.room;
@@ -89,29 +89,24 @@ app.get("/checkout", (req, res) => {
   var comments = req.query.comments;
 
   //await cart validation
+  //TODO validate total
   validateCart(cart).then((valid) => {
-    valid = valid.every(x => x);
+    valid = valid.every((x) => x);
     if (valid) {
       var id = Math.random().toString(36).substring(2, 15);
-      var order = JSON.stringify(req.query);
-      emailOrder(id, order);
+      emailOrder(id, req.query);
       venmo =
         "venmo://paycharge?txn=pay&recipients=" +
         destvenmo +
         "&amount=" +
         total +
-        "&note=" +
-        name +
-        "\nRoom: " +
-        room +
-        "\nComments: " +
-        comments +
-        "\nOrder: " +
+        "&note=Order: " +
         id;
-        console.log("Received order: "+id);
+      console.log("Received order: " + id);
       res.send(venmo);
     } else {
       console.log("cart invalid");
+      res.sendStatus(406);
     }
   });
 });
@@ -157,6 +152,15 @@ app.post("/open", (req, res) => {
   }
 });
 
+app.get("/validate", (req, res) => {
+  if (req.query.secret == secret) {
+    //remove cart from inventory
+    var cart = JSON.parse(req.query.order);
+    removeFromInventory(cart);
+    res.send("Removed items from inventory!");
+  }
+});
+
 let port = process.env.PORT;
 if (port == null || port == "") {
   port = 80;
@@ -171,19 +175,43 @@ function emailOrder(id, order) {
       pass: emailpass,
     },
   });
-
+  let formattedCart = ""
+  for (var i = 0; i < order.cart.length; i++) {
+    formattedCart += `${order.cart[i].quantity} X ${order.cart[i].name}: ${order.cart[i].price} each<br>`;
+  }
+  let link = `
+  <center>
+   <table align="center" cellspacing="0" cellpadding="0" width="100%">
+     <tr>
+       <td align="center" style="padding: 10px;">
+         <table border="0" class="mobile-button" cellspacing="0" cellpadding="0">
+           <tr>
+             <td align="center" bgcolor="#269f34" style="background-color: #269f34; margin: auto; max-width: 600px; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; padding: 15px 20px; " width="100%">
+             <!--[if mso]>&nbsp;<![endif]-->
+                 <a href="http://626munchies.tk/validate?secret=${secret}&order=${encodeURIComponent(JSON.stringify(order.cart))}" target="_blank" style="16px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; font-weight:normal; text-align:center; background-color: #269f34; text-decoration: none; border: none; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; display: inline-block;">
+                     <span style="font-size: 16px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; font-weight:normal; line-height:1.5em; text-align:center;">Validate Cart</span>
+               </a>
+             <!--[if mso]>&nbsp;<![endif]-->
+             </td>
+           </tr>
+         </table>
+       </td>
+     </tr>
+   </table>
+  </center>`;
+  let formattedOrder = `${order.name} - Room ${order.room}<br>Comments: ${order.comments}\n`;
   var mailOptions = {
     from: "626 Munchies",
     to: destemail,
     subject: "Order " + id,
-    text: "ID: "+id+"\nOrder: "+order,
+    html: "<h2>ID: " + id + "</h2><p>" + formattedOrder + "<br>"+formattedCart+"</p>" + link,
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
       console.log(error);
     } else {
-      console.log("Order email sent for order: "+id);
+      console.log("Email sent for order: " + id);
     }
   });
 }
@@ -193,10 +221,12 @@ function validateCart(cart) {
   for (var i = 0; i < cart.length; i++) {
     promises.push(validateItem(cart[i]));
   }
+  //return async fuckery
   return Promise.all(promises);
 }
 
 function validateItem(item) {
+  //async fuckery
   return new Promise((resolve) => {
     pool.query(
       "SELECT quantity FROM inventory WHERE name = $1",
@@ -211,9 +241,42 @@ function validateItem(item) {
           resolve(false);
           return;
         } else {
-          resolve(true);
+          //validate item price is same in database
+          pool.query(
+            "SELECT price FROM inventory WHERE name = $1",
+            [item.name],
+            (err, data) => {
+              if (err) {
+                console.log(err);
+                resolve(false);
+                return;
+              }
+              if (data.rows[0].price != item.price) {
+                resolve(false);
+                return;
+              } else {
+                resolve(true);
+              }
+            }
+          );
         }
       }
     );
   });
+}
+
+
+
+function removeFromInventory(cart) {
+  for (var i = 0; i < cart.length; i++) {
+    pool.query(
+      "UPDATE inventory SET quantity = quantity - $1 WHERE name = $2",
+      [cart[i].quantity, cart[i].name],
+      (err, data) => {
+        if (err) {
+          console.log(err);
+        }
+      }
+    );
+  }
 }

@@ -8,11 +8,13 @@ $(document).ready(function () {
   $.get("/inventory", function (data) {
     inventory = data;
     //loop through inventory
+    var oos = [];
     for (var i = 0; i < data.length; i++) {
       //create a new div for each item
       var item = $("<div>");
       if (data[i].quantity <= 0) {
-        item.addClass("nostock");
+        oos.push(data[i]);
+        continue;
       }
       var inneritem = $("<div>");
       item.addClass("item");
@@ -36,6 +38,35 @@ $(document).ready(function () {
       item.append(img);
       $("#inventory").append(item);
     }
+
+    //add oos items to inventory
+    for (var i = 0; i < oos.length; i++) {
+      //create a new div for each item
+      var item = $("<div>");
+      item.addClass("nostock")
+      var inneritem = $("<div>");
+      item.addClass("item");
+      inneritem.addClass("inneritem");
+      //add item name to div
+      inneritem.append("<p class='itemtitle'>" + oos[i].name + "</p>");
+      inneritem.append(
+        "<p class='itemprice'>Price: $" + oos[i].price + "</p>"
+      );
+      inneritem.append(
+        "<p class='itemquantity'>Quantity: " + oos[i].quantity + "</p></div>"
+      );
+      item.append(inneritem);
+      var img = $("<img>");
+      img.addClass("itemimage");
+      img.attr("src", `/resources/${oos[i].name.toLowerCase()}.png`);
+      img.attr(
+        "onerror",
+        `this.onerror=null; this.src='/resources/${oos[i].name.toLowerCase()}.PNG'`
+      );
+      item.append(img);
+      $("#inventory").append(item);
+    }
+    
 
     //add click event to each item
     $(".item").click(function (a) {

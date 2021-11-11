@@ -1,5 +1,5 @@
 html{
-	background-color: #292d38;
+	background-color: #272a2e;
 	color: white;
 	font-family: 'Open Sans', sans-serif;
 	font-size: 13px;
@@ -72,7 +72,8 @@ textarea{
 	background-color: #d44141;
 }
 .nostock{
-	background-color: #351b1b !important;
+	align-self: flex-end;
+	background-color: #3d1a1a !important;
 }
 #cart{
 	font-size: medium;
