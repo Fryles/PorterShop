@@ -10,63 +10,17 @@ $(document).ready(function () {
     //loop through inventory
     var oos = [];
     for (var i = 0; i < data.length; i++) {
-      //create a new div for each item
-      var item = $("<div>");
-      if (data[i].quantity <= 0) {
+      if (data[i].quantity == 0) {
         oos.push(data[i]);
-        continue;
+      } else {
+        makeItem(data[i], false);
       }
-      var inneritem = $("<div>");
-      item.addClass("item");
-      inneritem.addClass("inneritem");
-      //add item name to div
-      inneritem.append("<p class='itemtitle'>" + data[i].name + "</p>");
-      inneritem.append(
-        "<p class='itemprice'>Price: $" + data[i].price + "</p>"
-      );
-      inneritem.append(
-        "<p class='itemquantity'>Quantity: " + data[i].quantity + "</p></div>"
-      );
-      item.append(inneritem);
-      var img = $("<img>");
-      img.addClass("itemimage");
-      img.attr("src", `/resources/${data[i].name.toLowerCase()}.png`);
-      img.attr(
-        "onerror",
-        `this.onerror=null; this.src='/resources/${data[i].name.toLowerCase()}.PNG'`
-      );
-      item.append(img);
-      $("#inventory").append(item);
     }
 
     //add oos items to inventory
     for (var i = 0; i < oos.length; i++) {
-      //create a new div for each item
-      var item = $("<div>");
-      item.addClass("nostock")
-      var inneritem = $("<div>");
-      item.addClass("item");
-      inneritem.addClass("inneritem");
-      //add item name to div
-      inneritem.append("<p class='itemtitle'>" + oos[i].name + "</p>");
-      inneritem.append(
-        "<p class='itemprice'>Price: $" + oos[i].price + "</p>"
-      );
-      inneritem.append(
-        "<p class='itemquantity'>Quantity: " + oos[i].quantity + "</p></div>"
-      );
-      item.append(inneritem);
-      var img = $("<img>");
-      img.addClass("itemimage");
-      img.attr("src", `/resources/${oos[i].name.toLowerCase()}.png`);
-      img.attr(
-        "onerror",
-        `this.onerror=null; this.src='/resources/${oos[i].name.toLowerCase()}.PNG'`
-      );
-      item.append(img);
-      $("#inventory").append(item);
+      makeItem(oos[i], true);
     }
-    
 
     //add click event to each item
     $(".item").click(function (a) {
@@ -139,4 +93,30 @@ function getItem(name) {
     }
   }
   return null;
+}
+
+function makeItem(s, oos) {
+  var item = $("<div>");
+  if (oos) {
+    item.addClass("nostock");
+  }
+  var inneritem = $("<div>");
+  item.addClass("item");
+  var img = $("<img>");
+  img.addClass("itemimage");
+  img.attr("src", `/resources/${s.name.toLowerCase()}.png`);
+  img.attr(
+    "onerror",
+    `this.onerror=null; this.src='/resources/${s.name.toLowerCase()}.PNG'`
+  );
+  item.append(img);
+  inneritem.addClass("inneritem");
+  //add item name to div
+  inneritem.append("<p class='itemtitle'>" + s.name + "</p>");
+  inneritem.append("<p class='itemprice'>$" + s.price + "</p>");
+  // inneritem.append(
+  //   "<p class='itemquantity'>Quantity: " + s.quantity + "</p></div>"
+  // );
+  item.append(inneritem);
+  $("#inventory").append(item);
 }

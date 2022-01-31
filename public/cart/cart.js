@@ -103,7 +103,9 @@ function checkout() {
     swal("Your cart is empty!");
     return;
   }
-  if ($("#openstatus > span").innerText == "closed") {
+  if (
+    document.querySelector("#openstatus > span").innerText.includes("closed")
+  ) {
     swal("Sorry, we are closed right now.");
     return;
   }

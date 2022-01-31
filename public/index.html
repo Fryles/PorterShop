@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- https://coolors.co/294c60-f4d06f-ff8811-9dd9d2-fff8f0 -->
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>626 Snack Shop</title>
+    <title>626 Munchies</title>
     <link href="/style.css" rel="stylesheet" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -14,17 +15,23 @@
     />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-		<script src="/main.js"></script>
-    
+    <script src="/main.js"></script>
   </head>
   <body>
     <div class="header">
-      <a href="/"><h1>626 Munchies</h1></a>
-    <a class='carticon' href="/cart"><img  style="width: 30px;height: 30px;" src="/resources/cart.png">
-    </a>
-  </div>
-  <h2 id="openstatus"></h2>
-  <p>All chips are snack size bags unless noted otherwise.</p>
+      <a class="homelink" href="/">
+        <img class="porter" src="resources/626Munchies.png"
+      /></a>
+
+      <a class="carticon" href="/cart"><img src="/resources/cart.png" /> </a>
+    </div>
+    <h2 id="openstatus"></h2>
+    <p class="centeredP">
+      Welcome to 626 Munchies! <br />
+      We're currently only accepting orders for the sixth floor, but in the
+      future we plan to open to all floors in Porter B. <br />
+      All items are snack sized unless otherwise specified.
+    </p>
     <div id="inventory"></div>
   </body>
 </html>
