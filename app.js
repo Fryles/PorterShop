@@ -175,7 +175,7 @@ function emailOrder(id, order) {
       pass: emailpass,
     },
   });
-  let formattedCart = ""
+  let formattedCart = "";
   for (var i = 0; i < order.cart.length; i++) {
     formattedCart += `${order.cart[i].quantity} X ${order.cart[i].name}: ${order.cart[i].price} each<br>`;
   }
@@ -188,7 +188,9 @@ function emailOrder(id, order) {
            <tr>
              <td align="center" bgcolor="#269f34" style="background-color: #269f34; margin: auto; max-width: 600px; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; padding: 15px 20px; " width="100%">
              <!--[if mso]>&nbsp;<![endif]-->
-                 <a href="http://626munchies.tk/validate?secret=${secret}&order=${encodeURIComponent(JSON.stringify(order.cart))}" target="_blank" style="16px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; font-weight:normal; text-align:center; background-color: #269f34; text-decoration: none; border: none; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; display: inline-block;">
+                 <a href="http://626munchies.com/validate?secret=${secret}&order=${encodeURIComponent(
+    JSON.stringify(order.cart)
+  )}" target="_blank" style="16px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; font-weight:normal; text-align:center; background-color: #269f34; text-decoration: none; border: none; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; display: inline-block;">
                      <span style="font-size: 16px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; font-weight:normal; line-height:1.5em; text-align:center;">Validate Cart</span>
                </a>
              <!--[if mso]>&nbsp;<![endif]-->
@@ -204,7 +206,17 @@ function emailOrder(id, order) {
     from: "626 Munchies",
     to: destemail,
     subject: "Order " + id,
-    html: "<h2>ID: " + id + "</h2><p>" + formattedOrder + "<br>"+formattedCart+"</p>" + link,
+    html:
+      "<h2>ID: " +
+      id +
+      "</h2><h3>Total: $" +
+      order.total +
+      "</h3><p>" +
+      formattedOrder +
+      "<br>" +
+      formattedCart +
+      "</p>" +
+      link,
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
@@ -264,8 +276,6 @@ function validateItem(item) {
     );
   });
 }
-
-
 
 function removeFromInventory(cart) {
   for (var i = 0; i < cart.length; i++) {
