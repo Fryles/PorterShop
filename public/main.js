@@ -104,10 +104,10 @@ function makeItem(s, oos) {
   item.addClass("item");
   var img = $("<img>");
   img.addClass("itemimage");
-  img.attr("src", `/resources/${s.name.toLowerCase()}.png`);
+  img.attr("src", `/resources/${s.name.toLowerCase()}.webp`);
   img.attr(
     "onerror",
-    `this.onerror=null; this.src='/resources/${s.name.toLowerCase()}.PNG'`
+    `this.onerror=null; this.src='/resources/${s.name.toLowerCase()}.png'`
   );
   item.append(img);
   inneritem.addClass("inneritem");
