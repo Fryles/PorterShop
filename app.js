@@ -4,16 +4,19 @@ const { Pool } = require("pg");
 var cookieParser = require("cookie-parser");
 const nodemailer = require("nodemailer");
 
-var adminpass = process.env.ADMIN_PASS;
-var adminuser = process.env.ADMIN_USER;
-var dataurl = process.env.DATABASE_URL;
-var email = process.env.EMAIL;
-var emailpass = process.env.EMAIL_PASS;
-var destemail = process.env.DEST_EMAIL;
-var destvenmo = process.env.VENMO;
-var secret = process.env.SECRET;
+const adminpass = process.env.ADMIN_PASS;
+const adminuser = process.env.ADMIN_USER;
+const dataurl = process.env.DATABASE_URL;
+const email = process.env.EMAIL;
+const emailpass = process.env.EMAIL_PASS;
+const destemail = process.env.DEST_EMAIL;
+const destvenmo = process.env.VENMO;
+const secret = process.env.SECRET;
 
 var currentToken = "";
+var currentOrders = [];
+const numRecentOrders = 3;
+var curOrderIndex = 0;
 
 var pool = new Pool({
   connectionString: dataurl,
@@ -94,7 +97,7 @@ app.get("/checkout", (req, res) => {
     valid = valid.every((x) => x);
     if (valid) {
       var id = Math.random().toString(36).substring(2, 15);
-      emailOrder(id, req.query);
+      logOrder(id, req.query);
       venmo =
         "venmo://paycharge?txn=pay&recipients=" +
         destvenmo +
@@ -152,12 +155,25 @@ app.post("/open", (req, res) => {
   }
 });
 
+app.get("/orderquery", (req, res) => {
+  if (currentToken == req.cookies["token"]) {
+    res.send(currentOrders);
+  } else {
+    console.log("unauthorized");
+    res.sendStatus(403);
+    return;
+  }
+});
+
 app.get("/validate", (req, res) => {
-  if (req.query.secret == secret) {
-    //remove cart from inventory
+  if (currentToken == req.cookies["token"]) {
     var cart = JSON.parse(req.query.order);
     removeFromInventory(cart);
     res.send("Removed items from inventory!");
+  } else {
+    console.log("unauthorized");
+    res.sendStatus(403);
+    return;
   }
 });
 
@@ -167,65 +183,12 @@ if (port == null || port == "") {
 }
 app.listen(port);
 
-function emailOrder(id, order) {
-  var transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: email,
-      pass: emailpass,
-    },
-  });
-  let formattedCart = "";
-  for (var i = 0; i < order.cart.length; i++) {
-    formattedCart += `${order.cart[i].quantity} X ${order.cart[i].name}: ${order.cart[i].price} each<br>`;
-  }
-  let link = `
-  <center>
-   <table align="center" cellspacing="0" cellpadding="0" width="100%">
-     <tr>
-       <td align="center" style="padding: 10px;">
-         <table border="0" class="mobile-button" cellspacing="0" cellpadding="0">
-           <tr>
-             <td align="center" bgcolor="#269f34" style="background-color: #269f34; margin: auto; max-width: 600px; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; padding: 15px 20px; " width="100%">
-             <!--[if mso]>&nbsp;<![endif]-->
-                 <a href="http://626munchies.com/validate?secret=${secret}&order=${encodeURIComponent(
-    JSON.stringify(order.cart)
-  )}" target="_blank" style="16px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; font-weight:normal; text-align:center; background-color: #269f34; text-decoration: none; border: none; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; display: inline-block;">
-                     <span style="font-size: 16px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; font-weight:normal; line-height:1.5em; text-align:center;">Validate Cart</span>
-               </a>
-             <!--[if mso]>&nbsp;<![endif]-->
-             </td>
-           </tr>
-         </table>
-       </td>
-     </tr>
-   </table>
-  </center>`;
-  let formattedOrder = `${order.name} - Room ${order.room}<br>Comments: ${order.comments}\n`;
-  var mailOptions = {
-    from: "626 Munchies",
-    to: destemail,
-    subject: "Order " + id,
-    html:
-      "<h2>ID: " +
-      id +
-      "</h2><h3>Total: $" +
-      order.total +
-      "</h3><p>" +
-      formattedOrder +
-      "<br>" +
-      formattedCart +
-      "</p>" +
-      link,
+function logOrder(id, order) {
+  currentOrders[curOrderIndex] = {
+    id: id,
+    order: order,
   };
-
-  transporter.sendMail(mailOptions, function (error, info) {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log("Email sent for order: " + id);
-    }
-  });
+  curOrderIndex = (curOrderIndex + 1) % numRecentOrders;
 }
 
 function validateCart(cart) {
