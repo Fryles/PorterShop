@@ -52,6 +52,10 @@ textarea {
   height: 50px;
   margin: 3px;
 }
+.column {
+  margin-left: auto;
+  margin-right: auto;
+}
 .header {
   background: #294c60;
   color: #f4d06f;
