@@ -15,7 +15,7 @@ const secret = process.env.SECRET;
 
 var currentToken = "";
 var currentOrders = [];
-const numRecentOrders = 3;
+const numRecentOrders = 5;
 var curOrderIndex = 0;
 
 var pool = new Pool({
@@ -167,9 +167,22 @@ app.get("/orderquery", (req, res) => {
 
 app.get("/validate", (req, res) => {
   if (currentToken == req.cookies["token"]) {
-    var cart = JSON.parse(req.query.order);
-    removeFromInventory(cart);
+    var orderData = JSON.parse(req.query.order);
+    removeFromInventory(orderData.order.cart);
+    currentOrders = currentOrders.filter((x) => x.id != orderData.id);
     res.send("Removed items from inventory!");
+  } else {
+    console.log("unauthorized");
+    res.sendStatus(403);
+    return;
+  }
+});
+
+app.get("/remove", (req, res) => {
+  if (currentToken == req.cookies["token"]) {
+    let id = req.query.id;
+    currentOrders = currentOrders.filter((x) => x.id != id);
+    res.send("Removed order!");
   } else {
     console.log("unauthorized");
     res.sendStatus(403);
@@ -187,6 +200,7 @@ function logOrder(id, order) {
   currentOrders[curOrderIndex] = {
     id: id,
     order: order,
+    time: new Date().toLocaleTimeString(),
   };
   curOrderIndex = (curOrderIndex + 1) % numRecentOrders;
 }

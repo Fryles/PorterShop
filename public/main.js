@@ -56,20 +56,30 @@ function initCart() {
 }
 
 function addToCart(item) {
-  var slider = document.createElement("input");
-  slider.type = "range";
-  slider.min = 1;
-  slider.max = parseInt(item.quantity);
-  slider.value = 1;
-  slider.step = 1;
-  slider.className = "slider";
-  slider.onchange = function () {
-    $(".swal-text")[0].innerText = slider.value;
-  };
+  var slider;
+  var sliderText;
+  var titleText;
+  if (parseInt(item.quantity) == 1) {
+    sliderText = "This is the last item in stock";
+    titleText = 1 + " " + item.name;
+  } else {
+    slider = document.createElement("input");
+    slider.type = "range";
+    slider.min = 1;
+    slider.max = parseInt(item.quantity);
+    slider.value = 1;
+    slider.step = 1;
+    slider.className = "slider";
+    sliderText = "Use the slider to change the quantity of this item";
 
+    titleText = slider.value + " " + item.name;
+    slider.onchange = function () {
+      $(".swal-title")[0].innerText = slider.value + " " + item.name;
+    };
+  }
   swal({
-    title: "Add " + item.name + " to cart?",
-    text: "1",
+    title: titleText,
+    text: sliderText,
     content: slider,
     button: {
       text: "Add to cart",

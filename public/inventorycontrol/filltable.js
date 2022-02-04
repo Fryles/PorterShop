@@ -6,34 +6,11 @@ $(document).ready(function () {
 
   //add listener to submit
   $("#submitInventory").on("click", function () {
-    //get inventory from table
-    var table = $("#inventoryTable > tbody");
-    var rows = table.find("tr");
-    inventory = [];
-    for (var i = 0; i < rows.length; i++) {
-      var row = rows[i];
-      var cells = row.cells;
-      var name = cells[0].innerText;
-      var price = cells[1].innerText;
-      var quantity = cells[2].innerText;
-      //validate input
-      if (name == "" || price == "" || quantity == "") {
-        alert("Please fill in all fields");
-        return;
-      }
-      inventory.push({
-        name: name,
-        price: price,
-        quantity: quantity,
-      });
-    }
-    //send inventory to server
-    sendAdjustment();
-    //update local table
-    fillTable();
+    submitAdjustments();
   });
 
   $("#add").click(function () {
+    sub;
     inventory.push({
       name: "name" + addIndex,
       price: 0,
@@ -44,6 +21,7 @@ $(document).ready(function () {
   });
 
   $("#remove").click(function () {
+    submitAdjustments();
     //prompt for item to remove
     var item = prompt("Enter item to remove");
     var index = getItemIndex(item);
@@ -65,7 +43,7 @@ $(document).ready(function () {
 
   $("#close").click(function () {
     $.post("/open", { status: false }, function (data) {
-      getOpenStatus()
+      getOpenStatus();
     });
   });
 });
@@ -125,10 +103,35 @@ function loadTable() {
     },
   });
 }
-
+function submitAdjustments() {
+  var table = $("#inventoryTable > tbody");
+  var rows = table.find("tr");
+  inventory = [];
+  for (var i = 0; i < rows.length; i++) {
+    var row = rows[i];
+    var cells = row.cells;
+    var name = cells[0].innerText;
+    var price = cells[1].innerText;
+    var quantity = cells[2].innerText;
+    //validate input
+    if (name == "" || price == "" || quantity == "") {
+      alert("Please fill in all fields");
+      return;
+    }
+    inventory.push({
+      name: name,
+      price: price,
+      quantity: quantity,
+    });
+  }
+  //send inventory to server
+  sendAdjustment();
+  //update local table
+  fillTable();
+}
 function getOpenStatus() {
   $.get("/open", function (data) {
-    if (data.status) { 
+    if (data.status) {
       $("#opens").html("Currently <span style='color:#90EAA9'>open!</span>");
     } else {
       $("#opens").html("Currently <span style='color:#EA9090'>closed.</span>");
