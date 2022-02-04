@@ -56,6 +56,9 @@ textarea {
   margin-left: auto;
   margin-right: auto;
 }
+.swal-text-center {
+  text-align: center;
+}
 .header {
   background: #294c60;
   color: #f4d06f;
