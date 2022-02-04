@@ -7,10 +7,11 @@ $(document).ready(function () {
   //add listener to submit
   $("#submitInventory").on("click", function () {
     submitAdjustments();
+    alert("Inventory Updated");
   });
 
   $("#add").click(function () {
-    sub;
+    submitAdjustments();
     inventory.push({
       name: "name" + addIndex,
       price: 0,
@@ -59,7 +60,6 @@ function sendAdjustment() {
       console.log(data);
     },
   });
-  alert("Inventory Updated");
 }
 
 function getItemIndex(name) {
