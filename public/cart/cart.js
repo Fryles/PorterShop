@@ -5,6 +5,8 @@ $(document).ready(function () {
     inventory = data;
   });
   cart = JSON.parse(localStorage.getItem("cart"));
+  //compress seperate cart items together
+
   //add cart items to page in list
   cart.forEach((item) => {
     $("#cart").append(
