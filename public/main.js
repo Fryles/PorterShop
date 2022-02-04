@@ -87,9 +87,25 @@ function addToCart(item) {
     },
   }).then((a) => {
     if (a) {
+      //fix the non-existent slider value to add to cart
+      if (item.quantity == 1) {
+        slider = {
+          value: 1,
+        };
+      }
+
+      var cart = JSON.parse(localStorage.getItem("cart"));
       item.quantity = slider.value;
-      var cart = localStorage.getItem("cart");
-      cart = JSON.parse(cart);
+      //remove item quantity from local inventory
+      for (var i = 0; i < inventory.length; i++) {
+        if (inventory[i].name == item.name) {
+          inventory[i].quantity -= item.quantity;
+          if (inventory[i].quantity <= 0) {
+            updateOOS(inventory[i].name);
+          }
+        }
+      }
+
       cart.push(item);
       localStorage.setItem("cart", JSON.stringify(cart));
     }
@@ -129,4 +145,12 @@ function makeItem(s, oos) {
   // );
   item.append(inneritem);
   $("#inventory").append(item);
+}
+
+function updateOOS(name) {
+  $(".item").each(function (a, b) {
+    if ($(b).find(".itemtitle").text() == name) {
+      $(b).addClass("nostock");
+    }
+  });
 }
