@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const { Pool } = require("pg");
 var cookieParser = require("cookie-parser");
-const nodemailer = require("nodemailer");
+app.use(require("sanitize").middleware);
 
 const adminpass = process.env.ADMIN_PASS;
 const adminuser = process.env.ADMIN_USER;
@@ -85,11 +85,13 @@ app.post("/adminlogin", (req, res) => {
 });
 
 app.get("/checkout", (req, res) => {
-  var cart = req.query.cart;
-  var total = req.query.total;
-  var room = req.query.room;
-  var name = req.query.name;
-  var comments = req.query.comments;
+  var cart = cleanCart(req.query.cart);
+  var total = req.queryFloat("total");
+  var room = req.queryInt("room");
+  var name = req.queryString("name");
+  var comments = req.queryString("comments");
+  console.log(cart);
+  console.log(total);
 
   //await cart validation
   //TODO validate total
@@ -266,4 +268,22 @@ function removeFromInventory(cart) {
       }
     );
   }
+}
+
+function cleanCart(cart) {
+  var newCart = [];
+  for (var i = 0; i < cart.length; i++) {
+    if (cart[i].quantity > 0) {
+      cart[i].price = parseFloat(cart[i].price);
+      cart[i].quantity = parseInt(cart[i].quantity);
+      cart[i].name = sanitizeString(cart[i].name);
+      newCart.push(cart[i]);
+    }
+  }
+  return newCart;
+}
+
+function sanitizeString(str) {
+  str = str.replace(/[^a-z0-9áéíóúñü \.,_-]/gim, "");
+  return str.trim();
 }
