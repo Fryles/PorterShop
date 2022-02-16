@@ -71,6 +71,7 @@ function fillOrders(data, refresh) {
         if (oldIds.includes(orders[i].id)) {
           continue;
         } else {
+          playSound("/resources/bing.mp3");
           animBG(0, 1000, 3);
         }
       }
@@ -94,4 +95,9 @@ function animBG(animCount, animTime, maxAnims) {
       animBG(animCount, animTime, maxAnims);
     }, animTime);
   }
+}
+
+function playSound(url) {
+  const audio = new Audio(url);
+  audio.play();
 }
