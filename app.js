@@ -256,28 +256,33 @@ function validateItem(item) {
           resolve(false);
           return;
         }
-        if (data.rows[0].quantity < item.quantity) {
+        try {
+          if (data.rows[0].quantity < item.quantity) {
+            resolve(false);
+            return;
+          } else {
+            //validate item price is same in database
+            pool.query(
+              "SELECT price FROM inventory WHERE name = $1",
+              [item.name],
+              (err, data) => {
+                if (err) {
+                  console.log(err);
+                  resolve(false);
+                  return;
+                }
+                if (data.rows[0].price != item.price) {
+                  resolve(false);
+                  return;
+                } else {
+                  resolve(true);
+                }
+              }
+            );
+          }
+        } catch (e) {
+          console.log(e);
           resolve(false);
-          return;
-        } else {
-          //validate item price is same in database
-          pool.query(
-            "SELECT price FROM inventory WHERE name = $1",
-            [item.name],
-            (err, data) => {
-              if (err) {
-                console.log(err);
-                resolve(false);
-                return;
-              }
-              if (data.rows[0].price != item.price) {
-                resolve(false);
-                return;
-              } else {
-                resolve(true);
-              }
-            }
-          );
         }
       }
     );
