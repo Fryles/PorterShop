@@ -9,7 +9,6 @@ const adminpass = process.env.ADMIN_PASS;
 const adminuser = process.env.ADMIN_USER;
 const dataurl = process.env.DATABASE_URL;
 const destvenmo = process.env.VENMO;
-const secret = process.env.SECRET;
 const spreadsheetId = process.env.SPREAD_ID;
 
 var currentToken = "";

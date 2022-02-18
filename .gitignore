@@ -1,5 +1,4 @@
 /node_modules
 .env
 /public/resources/pngs/
-keys.json
 token.json
