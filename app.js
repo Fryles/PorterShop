@@ -1,22 +1,23 @@
 const express = require("express");
 const app = express();
 const { Pool } = require("pg");
-var cookieParser = require("cookie-parser");
+const cookieParser = require("cookie-parser");
 app.use(require("sanitize").middleware);
+const { google } = require("googleapis");
 
 const adminpass = process.env.ADMIN_PASS;
 const adminuser = process.env.ADMIN_USER;
 const dataurl = process.env.DATABASE_URL;
-const email = process.env.EMAIL;
-const emailpass = process.env.EMAIL_PASS;
-const destemail = process.env.DEST_EMAIL;
 const destvenmo = process.env.VENMO;
 const secret = process.env.SECRET;
+const spreadsheetId = process.env.SPREAD_ID;
 
 var currentToken = "";
 var currentOrders = [];
 const numRecentOrders = 5;
 var curOrderIndex = 0;
+var auth;
+var googleSheets;
 
 var pool = new Pool({
   connectionString: dataurl,
@@ -24,6 +25,15 @@ var pool = new Pool({
     rejectUnauthorized: false,
   },
 });
+
+//for ref:
+/*      values: [
+  row 1   ["1", "2", ...],
+  row 2   ["3", "4", ...],
+      ],
+*/
+
+googleSheet();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -167,9 +177,28 @@ app.get("/orderquery", (req, res) => {
   }
 });
 
-app.get("/validate", (req, res) => {
+app.get("/validate", async (req, res) => {
   if (currentToken == req.cookies["token"]) {
     var orderData = JSON.parse(req.query.order);
+    var toAppend = [];
+    for (let i = 0; i < orderData.order.cart.length; i++) {
+      let temp = [];
+      temp[0] = new Date().getMonth() + 1;
+      temp[1] = orderData.order.cart[i].name;
+      temp[2] = orderData.order.cart[i].quantity;
+      temp[3] = orderData.order.cart[i].price;
+      toAppend.push(temp);
+    }
+    googleSheets.spreadsheets.values.append({
+      auth,
+      spreadsheetId,
+      range: "I:I",
+      valueInputOption: "RAW",
+      insertDataOption: "INSERT_ROWS",
+      resource: {
+        values: toAppend,
+      },
+    });
     removeFromInventory(orderData.order.cart);
     currentOrders = currentOrders.filter((x) => x.id != orderData.id);
     res.send("Removed items from inventory!");
@@ -284,6 +313,15 @@ function cleanCart(cart) {
 }
 
 function sanitizeString(str) {
-  str = str.replace(/[^a-z0-9áéíóúñü \.,_-]/gim, "");
+  str = str.replace(/[^a-z0-9&'áéíóúñü \.,_-]/gim, "");
   return str.trim();
+}
+
+async function googleSheet() {
+  auth = new google.auth.GoogleAuth({
+    keyFile: "keys.json",
+    scopes: "https://www.googleapis.com/auth/spreadsheets",
+  });
+  const client = await auth.getClient();
+  googleSheets = google.sheets({ version: "v4", auth: client });
 }
