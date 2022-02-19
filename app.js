@@ -193,7 +193,7 @@ app.get("/validate", async (req, res) => {
       spreadsheetId,
       range: "I:I",
       valueInputOption: "RAW",
-      insertDataOption: "INSERT_ROWS",
+      insertDataOption: "OVERWRITE",
       resource: {
         values: toAppend,
       },
