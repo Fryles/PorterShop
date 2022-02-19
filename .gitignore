@@ -2,3 +2,4 @@
 .env
 /public/resources/pngs/
 token.json
+keys.json
