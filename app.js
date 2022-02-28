@@ -25,13 +25,6 @@ var pool = new Pool({
   },
 });
 
-//for ref:
-/*      values: [
-  row 1   ["1", "2", ...],
-  row 2   ["3", "4", ...],
-      ],
-*/
-
 googleSheet();
 
 app.use(express.urlencoded({ extended: true }));
