@@ -11,6 +11,8 @@ const dataurl = process.env.DATABASE_URL;
 const destvenmo = process.env.VENMO;
 const spreadsheetId = process.env.SPREAD_ID;
 
+const useSheets = false;
+
 var currentToken = "";
 var currentOrders = [];
 const numRecentOrders = 5;
@@ -25,7 +27,7 @@ var pool = new Pool({
 	},
 });
 
-googleSheet();
+useSheets ? googleSheet() : null;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -181,16 +183,18 @@ app.get("/validate", async (req, res) => {
 			temp[3] = orderData.order.cart[i].price;
 			toAppend.push(temp);
 		}
-		googleSheets.spreadsheets.values.append({
-			auth,
-			spreadsheetId,
-			range: "J:J",
-			valueInputOption: "RAW",
-			insertDataOption: "OVERWRITE",
-			resource: {
-				values: toAppend,
-			},
-		});
+		if (useSheets) {
+			googleSheets.spreadsheets.values.append({
+				auth,
+				spreadsheetId,
+				range: "J:J",
+				valueInputOption: "RAW",
+				insertDataOption: "OVERWRITE",
+				resource: {
+					values: toAppend,
+				},
+			});
+		}
 		console.log(toAppend);
 		removeFromInventory(orderData.order.cart);
 		currentOrders = currentOrders.filter((x) => x.id != orderData.id);
@@ -315,6 +319,7 @@ function sanitizeString(str) {
 	return str.trim();
 }
 
+// set up google sheets api
 async function googleSheet() {
 	auth = new google.auth.GoogleAuth({
 		keyFile: "keys.json",

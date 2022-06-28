@@ -1,60 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Super Secret Shit</title>
-    <link href="/style.css" rel="stylesheet" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script>
-      $(document).ready(function () {
-        $("#login").click(function () {
-          var username = $("#username").val();
-          var password = $("#password").val();
-          data = { username: username, password: password };
-          $.ajax({
-            url: "/adminlogin",
-            type: "POST",
-            data: data,
-            success: function (res) {
-              if (res != "fuckyou") {
-                window.location.href = "/inventorycontrol";
-              } else {
-                window.location.href = "https://youtu.be/QtBDL8EiNZo";
-              }
-            },
-          });
-        });
-      });
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Super Secret Panel</title>
+		<link href="/style.css" rel="stylesheet" />
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<script>
+			$(document).ready(function () {
+				$("#login").click(function () {
+					var username = $("#username").val();
+					var password = $("#password").val();
+					data = { username: username, password: password };
+					$.ajax({
+						url: "/adminlogin",
+						type: "POST",
+						data: data,
+						success: function (res) {
+							if (res != "fuckyou") {
+								window.location.href = "/inventorycontrol";
+							} else {
+								// rick rolled dunce
+								window.location.href = "https://youtu.be/QtBDL8EiNZo";
+							}
+						},
+					});
+				});
+			});
 
-      function setCookie(name, value, hours) {
-        var expires = "";
-        if (hours) {
-          var date = new Date();
-          date.setTime(date.getTime() + hours * 60 * 60 * 1000);
-          expires = "; expires=" + date.toUTCString();
-        }
-        document.cookie = name + "=" + (value || "") + expires + "; path=/";
-      }
-    </script>
-  </head>
-  <body>
-    <h1>Super Secret Shit</h1>
-    <p>Please don't brute force me :)</p>
-    <label>Username: </label>
-    <input id="username" type="text" placeholder="Username" name="username" 
-    autocomplete="username"/>
-    <br />
-    <label>Password: </label>
-    <input
-      id="password"
-      type="password"
-      placeholder="Password"
-      name="password"
-      autocomplete="current-password"
-    />
-    <br />
-    <button id="login">Login</button>
-  </body>
+			function setCookie(name, value, hours) {
+				var expires = "";
+				if (hours) {
+					var date = new Date();
+					date.setTime(date.getTime() + hours * 60 * 60 * 1000);
+					expires = "; expires=" + date.toUTCString();
+				}
+				document.cookie = name + "=" + (value || "") + expires + "; path=/";
+			}
+		</script>
+	</head>
+	<body>
+		<h1>Super Secret Panel</h1>
+		<p>Please enter your admin login details here</p>
+		<label>Username: </label>
+		<input
+			id="username"
+			type="text"
+			placeholder="Username"
+			name="username"
+			autocomplete="username"
+		/>
+		<br />
+		<label>Password: </label>
+		<input
+			id="password"
+			type="password"
+			placeholder="Password"
+			name="password"
+			autocomplete="current-password"
+		/>
+		<br />
+		<button id="login">Login</button>
+	</body>
 </html>
