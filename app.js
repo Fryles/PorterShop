@@ -222,6 +222,7 @@ let port = process.env.PORT;
 if (port == null || port == "") {
 	port = 80;
 }
+console.log("PorterShop running at localhost:" + port);
 app.listen(port);
 
 function logOrder(id, order) {
