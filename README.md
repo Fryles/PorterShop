@@ -8,7 +8,7 @@
   <p align="center">
     An ecommerce website designed to distribute snacks to students living in the Porter Dorms.
     <br />
-    <a href="626munchies.com">View Website</a>
+    <a href="https://626munchies.com">View Website</a>
 |
     <a href="https://github.com/fryles/portershop/issues">Report Bug or Request Feature</a>
 
