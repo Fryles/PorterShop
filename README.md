@@ -8,8 +8,6 @@
   <p align="center">
     An ecommerce website designed to distribute snacks to students living in the Porter Dorms.
     <br />
-    <a href="http://626munchies.com">View Website</a>
-|
     <a href="https://github.com/fryles/portershop/issues">Report Bug or Request Feature</a>
 
   </p>
@@ -21,7 +19,7 @@
 
 While not particularly useful anymore, this project is an example of one of the simplest ways to get started with ecommerce.
 The only money put into this website was to purchase the domain. Hosting and database management are done via Heroku.
-For demonstration purposes, I have left the database and site running at [626Munchies.com](https://626munchies.com), however, the store will be closed, and therefore not functional.
+Unfortunately, after moving out of our dorm I had to shut down this project, as it was no longer feasible to continue running.
 
 ### Features
 
